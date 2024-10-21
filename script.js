@@ -1,4 +1,3 @@
-
 //board
 let board;
 let boardWidth = 360;
@@ -8,17 +7,17 @@ let context;
 //bird
 let birdWidth = 34; //width/height ratio = 408/228 = 17/12
 let birdHeight = 24;
-let birdX = boardWidth/8;
-let birdY = boardHeight/2;
+let birdX = boardWidth / 8;
+let birdY = boardHeight / 2;
 let birdImg;
 
 let bird = {
-    x : birdX,
-    y : birdY,
-    width : birdWidth,
-    height : birdHeight
-}
-
+    x: birdX,
+    y: birdY,
+    width: birdWidth,
+    height: birdHeight
+};
+    
 //pipes
 let pipeArray = [];
 let pipeWidth = 64; //width/height ratio = 384/3072 = 1/8
@@ -46,19 +45,20 @@ window.onload = function() {
 
     //draw flappy bird
     birdImg = new Image();
-    birdImg.src = "./bird.png";
+    birdImg.src = "./bird.png"; // Ensure the bird image is in the same directory
     birdImg.onload = function() {
         context.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
     }
 
     topPipeImg = new Image();
-    topPipeImg.src = "./toppipe.png";
+    topPipeImg.src = "./toppipe.png"; // Ensure the top pipe image is in the same directory
 
     bottomPipeImg = new Image();
-    bottomPipeImg.src = "./bottompipe.png";
+    bottomPipeImg.src = "./bottompipe.png"; // Ensure the bottom pipe image is in the same directory
 
     requestAnimationFrame(update);
     document.addEventListener("keydown", moveBird);
+    document.addEventListener("touchstart", moveBird); // Added touch support
 }
 
 function update() {
@@ -66,8 +66,8 @@ function update() {
     
     if (!gameStarted) {
         context.fillStyle = "white";
-        context.font = "20px sans-serif";
-        context.fillText("Press Space to Start", 20, boardHeight /3); // Display prompt to start the game
+        context.font = "30px sans-serif"; // Adjusted font size
+        context.fillText("Press Space to Start", 20, boardHeight / 3); // Display prompt to start the game
         return; // Don't update game until it's started
     }
     
@@ -76,6 +76,10 @@ function update() {
     }
 
     context.clearRect(0, 0, board.width, board.height);
+
+    // Set background color
+    context.fillStyle = "lightblue";
+    context.fillRect(0, 0, board.width, board.height);
 
     //bird
     velocityY += gravity;
@@ -109,7 +113,7 @@ function update() {
 
     //score
     context.fillStyle = "white";
-    context.font="45px sans-serif";
+    context.font = "45px sans-serif";
     context.fillText(score, 5, 45);
 
     if (gameOver) {
@@ -147,8 +151,8 @@ function placePipes() {
 }
 
 function moveBird(e) {
-    if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX") {
-        // Start the game when space is pressed for the first time
+    if (e.code == "Space" || e.code == "ArrowUp" || e.code == "KeyX" || e.type === "touchstart") {
+        // Start the game when space is pressed for the first time or on touch
         if (!gameStarted) {
             gameStarted = true;
             setInterval(placePipes, 1500); // Start placing pipes after the game begins
@@ -157,7 +161,7 @@ function moveBird(e) {
         //jump
         velocityY = -6;
 
-        //reset game
+        //reset game if it's over
         if (gameOver) {
             bird.y = birdY;
             pipeArray = [];
